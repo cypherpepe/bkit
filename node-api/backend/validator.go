@@ -21,10 +21,74 @@
 package backend
 
 import (
+	"slices"
+
 	"github.com/berachain/beacon-kit/node-api/backend/utils"
 	beacontypes "github.com/berachain/beacon-kit/node-api/handlers/beacon/types"
 	"github.com/berachain/beacon-kit/primitives/math"
 )
+
+// FilteredValidators will grab all of the validators from the state at the
+// given slot. It will then filter them by the provided ids and statuses.
+func (b Backend) FilteredValidators(
+	slot math.Slot, ids []string, statuses []string,
+) ([]*beacontypes.ValidatorData, error) {
+	st, _, err := b.stateFromSlot(slot)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert requested ids (can be validator index or pubkey) to validator index only.
+	validatorIndicies := make([]uint64, 0, len(ids))
+	for _, id := range ids {
+		validatorIndex, vErr := utils.ValidatorIndexByID(st, id)
+		if vErr != nil {
+			return nil, vErr
+		}
+		validatorIndicies = append(validatorIndicies, validatorIndex.Unwrap())
+	}
+
+	validators, err := st.GetValidators()
+	if err != nil {
+		return nil, err
+	}
+
+	// Filter on validator indexes and statuses.
+	validatorData := make([]*beacontypes.ValidatorData, 0, len(validators))
+	for _, validator := range validators {
+		// Skip the validator if we are filtering by indicies and this validator is not included.
+		index, valErr := st.ValidatorIndexByPubkey(validator.GetPubkey())
+		if valErr != nil {
+			return nil, err
+		}
+		if len(validatorIndicies) != 0 && !slices.Contains(validatorIndicies, index.Unwrap()) {
+			continue
+		}
+
+		// Skip the validator if we are filtering by statuses and this validator is not included.
+		status, valErr := utils.GetValidatorStatus(b.cs.SlotToEpoch(slot), validator)
+		if valErr != nil {
+			return nil, valErr
+		}
+		if len(statuses) != 0 && !slices.Contains(statuses, status) {
+			continue
+		}
+
+		balance, valErr := st.GetBalance(index)
+		if valErr != nil {
+			return nil, valErr
+		}
+		validatorData = append(validatorData, &beacontypes.ValidatorData{
+			ValidatorBalanceData: beacontypes.ValidatorBalanceData{
+				Index:   index.Unwrap(),
+				Balance: balance.Unwrap(),
+			},
+			Status:    status,
+			Validator: beacontypes.ValidatorFromConsensus(validator),
+		})
+	}
+	return validatorData, nil
+}
 
 func (b Backend) ValidatorByID(
 	slot math.Slot, id string,
@@ -48,32 +112,18 @@ func (b Backend) ValidatorByID(
 	if err != nil {
 		return nil, err
 	}
+	status, err := utils.GetValidatorStatus(b.cs.SlotToEpoch(slot), validator)
+	if err != nil {
+		return nil, err
+	}
 	return &beacontypes.ValidatorData{
 		ValidatorBalanceData: beacontypes.ValidatorBalanceData{
 			Index:   index.Unwrap(),
 			Balance: balance.Unwrap(),
 		},
-		Status:    "active_ongoing", // TODO: fix
+		Status:    status,
 		Validator: beacontypes.ValidatorFromConsensus(validator),
 	}, nil
-}
-
-// TODO: filter by status
-func (b Backend) ValidatorsByIDs(
-	slot math.Slot, ids []string, _ []string,
-) ([]*beacontypes.ValidatorData, error) {
-	validatorsData := make([]*beacontypes.ValidatorData, 0)
-	for _, id := range ids {
-		// TODO: we can probably optimize this via a getAllValidators
-		// query and then filtering but blocked by the fact that IDs
-		// can be indices and the hard type only holds its own pubkey.
-		validatorData, err := b.ValidatorByID(slot, id)
-		if err != nil {
-			return nil, err
-		}
-		validatorsData = append(validatorsData, validatorData)
-	}
-	return validatorsData, nil
 }
 
 func (b Backend) ValidatorBalancesByIDs(

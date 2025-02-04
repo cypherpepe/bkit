@@ -804,7 +804,7 @@ type (
 		ValidatorByID(
 			slot math.Slot, id string,
 		) (*types.ValidatorData, error)
-		ValidatorsByIDs(
+		FilteredValidators(
 			slot math.Slot,
 			ids []string,
 			statuses []string,

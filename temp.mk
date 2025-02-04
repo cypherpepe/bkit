@@ -10,7 +10,7 @@
 #    beacond     #
 #################
 
-HOMEDIR = /var/folders/z8/dnjjtbt10z50dtk_5sfckr7r0000gn/T/TestInjectedConsensusTestProcessProposalRequestInvalidBlock2262598698/001
+HOMEDIR = /var/folders/z8/dnjjtbt10z50dtk_5sfckr7r0000gn/T/TestInjectedConsensusTestProcessProposalRequestInvalidBlock3779682237/001
 DEVNET_CHAIN_SPEC = devnet
 JWT_PATH = ${TESTAPP_FILES_DIR}/jwt.hex
 # Use the genesis file from the beacond folder as it has been modified by beacond genesis set-deposit-storage.

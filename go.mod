@@ -2,6 +2,8 @@ module github.com/berachain/beacon-kit
 
 go 1.23.5
 
+toolchain go1.24.1
+
 replace (
 	github.com/cometbft/cometbft => github.com/berachain/cometbft v1.0.1-0.20250204132807-2ef0904aff5f
 	github.com/cometbft/cometbft/api => github.com/berachain/cometbft/api v1.0.1-0.20250204132807-2ef0904aff5f
@@ -26,7 +28,7 @@ require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc
 	github.com/ethereum/c-kzg-4844 v1.0.3
 	github.com/go-faster/xor v1.0.0
-	github.com/go-playground/validator/v10 v10.23.0
+	github.com/go-playground/validator/v10 v10.26.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/hashicorp/go-metrics v0.5.3
 	github.com/hashicorp/golang-lru/v2 v2.0.7
@@ -47,8 +49,8 @@ require (
 	github.com/spf13/viper v1.19.0
 	github.com/umbracle/fastrlp v0.1.0
 	go.uber.org/automaxprocs v1.6.0
-	golang.org/x/crypto v0.32.0
-	golang.org/x/sync v0.10.0
+	golang.org/x/crypto v0.33.0
+	golang.org/x/sync v0.11.0
 	sigs.k8s.io/yaml v1.4.0
 )
 
@@ -124,7 +126,7 @@ require (
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
-	github.com/gabriel-vasile/mimetype v1.4.6 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
 	github.com/getsentry/sentry-go v0.28.1 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
@@ -249,9 +251,9 @@ require (
 	golang.org/x/arch v0.12.0 // indirect
 	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f // indirect
 	golang.org/x/net v0.34.0 // indirect
-	golang.org/x/sys v0.29.0 // indirect
-	golang.org/x/term v0.28.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/term v0.29.0 // indirect
+	golang.org/x/text v0.22.0 // indirect
 	golang.org/x/time v0.6.0 // indirect
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
 	google.golang.org/genproto v0.0.0-20240624140628-dc46fd24d27d // indirect
